@@ -1,0 +1,11 @@
+s01|Como três homens, com um computador mais fraco que um celular, conseguiram pisar na Lua?
+s02|Em mil novecentos e sessenta e dois, o presidente Kennedy fez uma promessa: levar o homem à Lua antes do fim da década.
+s03|Mas aquilo não era apenas ciência. Era uma corrida.
+s04|Os soviéticos tinham lançado o primeiro satélite, e o primeiro homem ao espaço. Os Estados Unidos estavam ficando para trás.
+s05|Em dezesseis de julho de mil novecentos e sessenta e nove, o foguete Saturno Cinco decolou da Flórida, levando Armstrong, Aldrin e Collins.
+s06|Quatro dias depois, o módulo lunar Eagle se separou da nave, e começou a descida.
+s07|Mas o computador disparou alarmes, e o local de pouso estava cheio de pedras. Armstrong assumiu o controle manual, com menos de um minuto de combustível.
+s08|E então, o Eagle pousou.
+s09|Horas depois, Armstrong desceu a escada, e deixou a primeira pegada humana na Lua.
+s10|Seiscentos milhões de pessoas assistiram ao vivo.
+s11|A corrida espacial, finalmente, tinha um vencedor.

@@ -1,0 +1,361 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="assets/fonts/fonts.css">
+<style>
+html,body{margin:0;background:#000;overflow:hidden}
+#stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:#0e2020}
+.abs{position:absolute;left:0;top:0}
+#bg{width:2300px;height:1400px;background:url(assets/bg_teal.jpg);}
+#vig{width:1920px;height:1080px;background:radial-gradient(ellipse 75% 70% at 50% 48%,rgba(0,0,0,0) 35%,rgba(0,0,0,.55) 78%,rgba(0,0,0,.92) 100%);pointer-events:none}
+  .grain{width:1920px;height:1080px;mix-blend-mode:overlay;opacity:.16}
+#flick{width:1920px;height:1080px;background:#000}
+.card{position:absolute;left:0;top:0;padding:16px 16px 18px;background:url(assets/paper.jpg) #ece6d6;background-size:cover;
+  box-shadow:0 28px 55px rgba(0,0,0,.62),0 4px 10px rgba(0,0,0,.4);transform-origin:50% 50%;will-change:transform}
+.card .ph{overflow:hidden;position:relative;background:#222}
+.card img{width:100%;height:100%;object-fit:cover;display:block;filter:sepia(.28) saturate(.72) contrast(1.08) brightness(.96);transform-origin:50% 50%}
+.card .ph::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 40px rgba(40,25,5,.45)}
+.lbls{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
+.lbl{position:absolute;white-space:pre;background:#0d0d0d;color:#f1f1f1;font:700 21px/1 'Courier Prime',monospace;letter-spacing:2.5px;
+  padding:7px 12px 6px;box-shadow:0 3px 8px rgba(0,0,0,.45)}
+.note{position:absolute;left:0;top:0;background:url(assets/paper.jpg);background-size:cover;box-shadow:0 26px 50px rgba(0,0,0,.6);
+  font:700 30px/1.55 'Courier Prime',monospace;color:#2a2620;padding:46px 50px;white-space:pre;box-sizing:border-box}
+.stamp{position:absolute;left:0;top:0;color:#b8241c;border:7px solid #b8241c;font:700 74px/1 'Courier Prime',monospace;letter-spacing:6px;padding:14px 26px 10px;
+  -webkit-mask-image:url(assets/stamp_mask.png);-webkit-mask-size:100% 100%;mix-blend-mode:multiply;transform-origin:50% 50%;white-space:nowrap}
+.stamp.light{mix-blend-mode:normal}
+svg{overflow:visible}
+#title{width:1920px;height:1080px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+#t1{font:700 44px/1 'Courier Prime',monospace;color:#d9e4e2;letter-spacing:4px;position:relative;white-space:pre}
+#t1 i{position:absolute;left:-6px;top:50%;height:4px;background:#c0302a;border-radius:2px}
+#t2{font:700 130px/1 'Libre Baskerville',serif;color:#f3f0ea;margin-top:34px;letter-spacing:2px}
+#t2 b{color:#c0302a}
+#anim{width:1920px;height:1080px;background:url(assets/sepia.jpg);overflow:hidden}
+.hud{position:absolute;white-space:pre;background:#2b2116;color:#efe4cc;font:700 24px/1 'Courier Prime',monospace;letter-spacing:3px;padding:8px 14px 7px}
+.hud.red{background:#a3221a;color:#fff}
+#fade{width:1920px;height:1080px;background:#000}
+</style></head>
+<body>
+<div id="stage">
+  <div id="bg" class="abs"></div>
+  <svg id="map" class="abs" width="1920" height="1080"></svg>
+  <div id="layer" class="abs" style="width:1920px;height:1080px"></div>
+  <div id="title" class="abs"><div id="t1"><span id="t1s"></span><i id="strike"></i></div><div id="t2">UMA CORRIDA<b>.</b></div></div>
+  <div id="anim" class="abs"></div>
+  <div id="vig" class="abs"></div>
+  <img class="abs grain" src="assets/grain0.png"><img class="abs grain" src="assets/grain1.png"><img class="abs grain" src="assets/grain2.png"><img class="abs grain" src="assets/grain3.png"><img class="abs grain" src="assets/grain4.png"><img class="abs grain" src="assets/grain5.png">
+  <div id="flick" class="abs"></div>
+  <div id="fade" class="abs"></div>
+</div>
+<script>
+// ===== roteiro + tempos da narração (gerados a partir da voz) =====
+const SENT = {
+ s01:"Como três homens, com um computador mais fraco que um celular, conseguiram pisar na Lua?",
+ s02:"Em mil novecentos e sessenta e dois, o presidente Kennedy fez uma promessa: levar o homem à Lua antes do fim da década.",
+ s03:"Mas aquilo não era apenas ciência. Era uma corrida.",
+ s04:"Os soviéticos tinham lançado o primeiro satélite, e o primeiro homem ao espaço. Os Estados Unidos estavam ficando para trás.",
+ s05:"Em dezesseis de julho de mil novecentos e sessenta e nove, o foguete Saturno Cinco decolou da Flórida, levando Armstrong, Aldrin e Collins.",
+ s06:"Quatro dias depois, o módulo lunar Eagle se separou da nave, e começou a descida.",
+ s07:"Mas o computador disparou alarmes, e o local de pouso estava cheio de pedras. Armstrong assumiu o controle manual, com menos de um minuto de combustível.",
+ s08:"E então, o Eagle pousou.",
+ s09:"Horas depois, Armstrong desceu a escada, e deixou a primeira pegada humana na Lua.",
+ s10:"Seiscentos milhões de pessoas assistiram ao vivo.",
+ s11:"A corrida espacial, finalmente, tinha um vencedor."};
+let CUES = {}; let TOTAL = 63.4;
+function at(id,word){const s=SENT[id],[a,b]=CUES[id];const i=s.indexOf(word);if(i<0)throw new Error(id+':'+word);return a+(b-a)*i/s.length;}
+
+// ===== utilidades =====
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const P=(t,a,b)=>clamp((t-a)/(b-a));
+const lerp=(a,b,k)=>a+(b-a)*k;
+const eo=x=>1-Math.pow(1-x,3), ei=x=>x*x*x, eio=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const eback=x=>{const c1=1.15,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2);};
+function hash(n){const s=Math.sin(n*127.1+311.7)*43758.5453;return s-Math.floor(s);}
+const SFX=[]; const ITEMS=[]; const NS='http://www.w3.org/2000/svg';
+const layer=document.getElementById('layer');
+function el(tag,cls,parent,html){const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;(parent||layer).appendChild(e);return e;}
+function svgEl(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);parent.appendChild(e);return e;}
+
+// círculo vermelho desenhado à mão
+function scribblePath(cx,cy,rx,ry,seed){let d='',n=90,turn=1.18;for(let i=0;i<=n;i++){const k=i/n,a=-2.2+k*turn*2*Math.PI;
+  const w=1+0.06*Math.sin(k*9+seed)+0.04*Math.sin(k*23+seed*2)+0.05*k;const x=cx+Math.cos(a)*rx*w,y=cy+Math.sin(a)*ry*w*(1-0.04*k);
+  d+=(i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1);}return d;}
+function addCircle(parent,cx,cy,rx,ry,t0,dur=0.55,seed=1,width=6){
+  const s=svgEl('svg',{width:1,height:1,style:'position:absolute;left:0;top:0'},parent);
+  const p=svgEl('path',{d:scribblePath(cx,cy,rx,ry,seed),fill:'none',stroke:'#c4291f','stroke-width':width,'stroke-linecap':'round','stroke-linejoin':'round',opacity:.92},s);
+  const L=p.getTotalLength();p.style.strokeDasharray=L;SFX.push({t:t0,type:'scribble',d:dur});
+  ITEMS.push(t=>{p.style.strokeDashoffset=L*(1-eio(P(t,t0,t0+dur)));});}
+
+// rótulo estilo máquina de escrever
+function addLabel(parent,text,t0,x,y,opt={}){
+  const l=el('div','lbl'+(opt.cls?' '+opt.cls:''),parent);l.style.left=x+'px';l.style.top=y+'px';if(opt.size)l.style.fontSize=opt.size+'px';
+  const cps=opt.cps||20;SFX.push({t:t0,type:'type',n:text.length,cps});
+  ITEMS.push(t=>{const n=Math.floor((t-t0)*cps);if(t<t0){l.style.opacity=0;return;}l.style.opacity=1;
+    const done=n>=text.length;const cur=(!done||Math.floor(t*2.4)%2==0)?'_':' ';
+    l.textContent=text.slice(0,Math.min(n,text.length))+(opt.nocursor&&done?'':cur);});
+  if(opt.center)l.style.transform='translateX(-50%)';return l;}
+
+// carimbo vermelho
+function addStamp(parent,text,t0,x,y,rot=-12,opt={}){
+  const s=el('div','stamp'+(opt.light?' light':''),parent,text);if(opt.size)s.style.fontSize=opt.size+'px';
+  SFX.push({t:t0+0.12,type:'stamp'});
+  ITEMS.push(t=>{const k=P(t,t0,t0+0.16);if(t<t0){s.style.opacity=0;return;}
+    const sc=lerp(2.3,1,ei(k));s.style.opacity=lerp(0,0.9,k);
+    s.style.transform=`translate(${x}px,${y}px) translate(-50%,-50%) rotate(${rot}deg) scale(${sc})`;});return s;}
+
+// foto com moldura
+function addCard(src,w,aspect,k){ // k: {tin:[a,b], tout:[a,b], from, at, to, zoom:[s0,s1], z, drift}
+  const ph_h=Math.round((w-32)/aspect);const c=el('div','card');c.style.width=w+'px';c.style.boxSizing='border-box';
+  const ph=el('div','ph',c);ph.style.height=ph_h+'px';const im=el('img',null,ph);im.src='../imagens/'+src;if(k.pos)im.style.objectPosition=k.pos;
+  const H=ph_h+34; c.style.zIndex=k.z||1; const lab=el('div','lbls',c);
+  SFX.push({t:k.tin[0],type:'whoosh'}); if(k.tout)SFX.push({t:k.tout[0],type:'whoosh',v:.6});
+  ITEMS.push(t=>{
+    if(t<k.tin[0]||(k.tout&&t>k.tout[1])){c.style.display='none';return;}c.style.display='block';
+    let s,fx;const a=k.at;
+    if(t<k.tin[1]){const q=(k.ease||eback)(P(t,k.tin[0],k.tin[1]));s={x:lerp(k.from.x,a.x,q),y:lerp(k.from.y,a.y,q),r:lerp(k.from.r,a.r,q)};}
+    else if(k.tout&&t>k.tout[0]){const q=ei(P(t,k.tout[0],k.tout[1]));s={x:lerp(a.x,k.to.x,q),y:lerp(a.y,k.to.y,q),r:lerp(a.r,k.to.r,q)};}
+    else s={...a};
+    const life=P(t,k.tin[0],k.tout?k.tout[1]:TOTAL);const dr=k.drift||[0,0];
+    s.x+=dr[0]*life;s.y+=dr[1]*life;
+    const sc=k.scale?lerp(k.scale[0],k.scale[1],life):1;
+    c.style.transform=`translate(${s.x-w/2}px,${s.y-H/2}px) rotate(${s.r}deg) scale(${sc})`;
+    const z=k.zoom||[1,1.06];im.style.transform=`scale(${lerp(z[0],z[1],life)})`;if(k.origin)im.style.transformOrigin=k.origin;
+  });
+  return {c,ph,lab,w,H,ph_h};}
+
+// bilhete de papel datilografado
+function addNote(lines,w,h,k){
+  const n=el('div','note');n.style.width=w+'px';n.style.height=h+'px';n.style.zIndex=k.z||2;
+  const spans=lines.map(L=>{const d=el('div',null,n);d.style.minHeight='1.55em';return d;});
+  SFX.push({t:k.tin[0],type:'whoosh'});if(k.tout)SFX.push({t:k.tout[0],type:'whoosh',v:.6});
+  lines.forEach((L,i)=>{if(L.text)SFX.push({t:L.t,type:'type',n:L.text.length,cps:L.cps||24});});
+  ITEMS.push(t=>{
+    if(t<k.tin[0]||(k.tout&&t>k.tout[1])){n.style.display='none';return;}n.style.display='block';
+    let s;const a=k.at;
+    if(t<k.tin[1]){const q=eback(P(t,k.tin[0],k.tin[1]));s={x:lerp(k.from.x,a.x,q),y:lerp(k.from.y,a.y,q),r:lerp(k.from.r,a.r,q)};}
+    else if(k.tout&&t>k.tout[0]){const q=ei(P(t,k.tout[0],k.tout[1]));s={x:lerp(a.x,k.to.x,q),y:lerp(a.y,k.to.y,q),r:lerp(a.r,k.to.r,q)};}
+    else s={...a};
+    n.style.transform=`translate(${s.x-w/2}px,${s.y-h/2}px) rotate(${s.r}deg)`;
+    lines.forEach((L,i)=>{if(!L.text){spans[i].textContent='';return;}const c=Math.floor((t-L.t)*(L.cps||24));
+      spans[i].textContent=t<L.t?'':L.text.slice(0,Math.min(c,L.text.length));spans[i].style.color=L.color||'';});
+  });return n;}
+
+// ===== CENAS =====
+function build(){
+ // --- s01: gancho, foto da tripulação
+ const crew=addCard('01_tripulacao_apollo11_armstrong_collins_aldrin.jpg',1120,1920/1540,{tin:[0,1.1],tout:[5.6,6.35],
+   from:{x:2500,y:1350,r:16},at:{x:960,y:560,r:-3},to:{x:-800,y:420,r:-14},zoom:[1,1.07],drift:[-20,0],z:3});
+ addLabel(crew.lab,'APOLLO 11',1.2,40,40);
+ addLabel(crew.lab,'ARMSTRONG · COLLINS · ALDRIN',at('s01','computador'),40,86);
+ const peek=addCard('03_decolagem_saturno_v_16_julho_1969.jpg',360,1329/1920,{tin:[0.25,1.2],tout:[5.5,6.2],
+   from:{x:2300,y:-400,r:20},at:{x:1720,y:170,r:9},to:{x:2400,y:-300,r:20},z:1});
+ const peek2=addCard('09_eagle_retorno_terra_ao_fundo.jpg',380,1920/1853,{tin:[0.4,1.35],tout:[5.5,6.2],
+   from:{x:-400,y:1500,r:-20},at:{x:190,y:930,r:-8},to:{x:-500,y:1400,r:-20},z:1});
+
+ // --- s02: Kennedy + bilhete da promessa
+ const ken=addCard('02_kennedy_discurso_lua_1962.jpg',690,1514/1920,{tin:[5.75,6.75],tout:[12.75,13.45],
+   from:{x:-600,y:600,r:-16},at:{x:740,y:540,r:2},to:{x:700,y:1750,r:12},zoom:[1.02,1.1],z:3});
+ addLabel(ken.lab,'12 SET 1962',at('s02','mil'),36,36);
+ addLabel(ken.lab,'PRESIDENTE JOHN F. KENNEDY',at('s02','presidente'),36,82);
+ addCircle(ken.lab,16+0.56*(ken.w-32),16+0.24*ken.ph_h,135,118,at('s02','promessa'),0.6,2);
+ addNote([{text:'A PROMESSA:',t:at('s02','levar')-0.2},{text:''},{text:'> HOMEM NA LUA',t:at('s02','homem')},
+   {text:'> ANTES DE 1970',t:at('s02','antes')}],520,360,{tin:[at('s02','levar')-0.55,at('s02','levar')+0.25],tout:[12.7,13.35],
+   from:{x:2300,y:800,r:14},at:{x:1450,y:650,r:-4},to:{x:2400,y:900,r:16},z:4});
+
+ // --- s03: cartela de título (estilo "NOT JUST A MURDER. A SPARK.")
+ const t1s=document.getElementById('t1s'),strike=document.getElementById('strike'),t1=document.getElementById('t1'),t2=document.getElementById('t2'),title=document.getElementById('title');
+ const T1='NÃO ERA SÓ CIÊNCIA.',tT=13.45,tStrike=at('s03','Era')-0.15,tBig=at('s03','corrida')-0.2;
+ SFX.push({t:tT,type:'type',n:T1.length,cps:26});SFX.push({t:tStrike,type:'scribble',d:.3});SFX.push({t:tBig,type:'hit'});
+ ITEMS.push(t=>{const on=P(t,13.2,13.5)*(1-P(t,17.05,17.45));title.style.opacity=on;title.style.background=`radial-gradient(ellipse at 50% 50%,rgba(0,0,0,.25),rgba(0,0,0,.6))`;title.style.display=on>0?'flex':'none';
+   t1s.textContent=T1.slice(0,clamp(Math.floor((t-tT)*26),0,T1.length));
+   const sk=eio(P(t,tStrike,tStrike+0.3));strike.style.width=(t1s.offsetWidth+12)*sk+'px';
+   t1.style.opacity=lerp(1,.55,sk);t1.style.transform=`translateY(${lerp(0,-10,sk)}px)`;
+   const b=P(t,tBig,tBig+0.45);t2.style.opacity=eo(b);t2.style.transform=`scale(${lerp(1.12,1,eo(b))})`;
+   t2.style.letterSpacing=lerp(14,2,eo(b))+'px';});
+
+ // --- s04: placar da corrida espacial
+ const urss1=at('s04','primeiro satélite'),urss2=at('s04','primeiro homem'),eua=at('s04','Estados');
+ addNote([{text:'PLACAR DA CORRIDA ESPACIAL',t:17.9,cps:30},{text:''},
+   {text:'> 1957  1º SATÉLITE ....  URSS',t:urss1-0.35,cps:34},
+   {text:'> 1961  1º HOMEM .......  URSS',t:urss2-0.3,cps:34},
+   {text:'> 19??  A LUA ..........  ?',t:eua,cps:30,color:'#7b2018'}],1000,500,
+   {tin:[17.25,18.1],tout:[25.45,26.15],from:{x:960,y:1600,r:9},at:{x:930,y:520,r:-2},to:{x:-800,y:380,r:-22},z:3});
+ // círculos e carimbo no placar (coordenadas da cena, acompanham a nota parada)
+ const deco=el('div',null,layer);deco.style.cssText='position:absolute;left:0;top:0;z-index:5';
+ addCircle(deco,986,432,78,30,urss1+0.9,0.45,3,5);addCircle(deco,986,479,78,30,urss2+0.9,0.45,5,5);
+ addStamp(deco,'EUA ATRÁS',at('s04','trás')-0.35,1180,700,-11);
+ ITEMS.push(t=>{deco.style.display=(t>17&&t<25.45)?'block':'none';});
+
+ // --- s05: decolagem
+ const ln=addCard('03_decolagem_saturno_v_16_julho_1969.jpg',640,1329/1920,{tin:[25.55,26.55],tout:[33.95,34.65],
+   from:{x:900,y:1800,r:-7},at:{x:860,y:540,r:-2},to:{x:860,y:-900,r:3},zoom:[1.0,1.16],origin:'50% 20%',z:3});
+ addLabel(ln.lab,'16 JULHO 1969',at('s05','dezesseis'),34,34);
+ addLabel(ln.lab,'SATURNO V · 110 METROS',at('s05','foguete'),34,80);
+ addLabel(ln.lab,'CABO CANAVERAL, FLÓRIDA',at('s05','Flórida'),34,ln.ph_h-30);
+ SFX.push({t:at('s05','decolou')-0.3,type:'rumble',d:5});
+ const cr2=addCard('01_tripulacao_apollo11_armstrong_collins_aldrin.jpg',560,1920/1540,{tin:[at('s05','levando')-0.4,at('s05','levando')+0.5],tout:[33.95,34.6],
+   from:{x:2400,y:1100,r:18},at:{x:1490,y:740,r:6},to:{x:2500,y:900,r:18},z:4});
+ addLabel(cr2.lab,'A TRIPULAÇÃO',at('s05','Armstrong'),30,30);
+
+ // --- s06: mapa Terra–Lua + módulo Eagle
+ buildMap();
+ const eg=addCard('04_modulo_lunar_eagle_separacao.jpg',600,1,{tin:[at('s06','módulo')-0.3,at('s06','módulo')+0.6],tout:[39.2,39.65],
+   from:{x:1900,y:-600,r:16},at:{x:1500,y:650,r:4},to:{x:1500,y:670,r:4},zoom:[1.05,1.15],z:4,ease:eo});
+ addLabel(eg.lab,'MÓDULO LUNAR "EAGLE"',at('s06','Eagle'),30,30);
+ addCircle(eg.lab,16+0.5*568,16+0.38*568,135,120,at('s06','separou'),0.5,4);
+
+ // --- s07/s08: animação 2D vintage
+ buildAnim();
+
+ // --- s09: Armstrong + pegada
+ const ar=addCard('05_armstrong_dentro_do_modulo_lunar.jpg',640,1896/1945,{tin:[50.85,51.75],tout:[55.6,56.25],
+   from:{x:-600,y:400,r:-16},at:{x:600,y:520,r:-4},to:{x:-700,y:700,r:-18},zoom:[1.02,1.1],z:3});
+ addLabel(ar.lab,'NEIL ARMSTRONG',at('s09','Armstrong'),30,30);
+ const fp=addCard('06_pegada_no_solo_lunar.jpg',740,1912/1920,{tin:[at('s09','deixou')-0.35,at('s09','deixou')+0.55],tout:[55.6,56.3],
+   from:{x:2500,y:900,r:22},at:{x:1300,y:560,r:3},to:{x:2600,y:600,r:20},zoom:[1.0,1.12],z:4});
+ addLabel(fp.lab,'PRIMEIRA PEGADA',at('s09','primeira'),30,30);
+ addCircle(fp.lab,16+0.63*708,16+0.64*710,170,135,at('s09','pegada'),0.55,6);
+
+ // --- s10: controle da missão
+ const mc=addCard('08_controle_da_missao_comemora.jpg',1240,1920/1249,{tin:[55.85,56.75],tout:[58.95,59.55],
+   from:{x:960,y:1700,r:8},at:{x:960,y:545,r:-2},to:{x:960,y:-700,r:-6},zoom:[1.0,1.08],z:3});
+ addLabel(mc.lab,'CONTROLE DA MISSÃO · HOUSTON',56.6,40,40);
+ addLabel(mc.lab,'600 MILHÕES AO VIVO',at('s10','milhões')-0.1,40,86);
+
+ // --- s11: final
+ const al=addCard('07_aldrin_caminha_na_lua.jpg',860,1920/1874,{tin:[58.95,59.95],from:{x:960,y:1750,r:-8},at:{x:960,y:545,r:-2},
+   zoom:[1.0,1.12],scale:[1,1.06],z:3});
+ addLabel(al.lab,'20 JULHO 1969',at('s11','corrida'),34,34);
+ addLabel(al.lab,'MAR DA TRANQUILIDADE',at('s11','finalmente'),34,80);
+ const fin=el('div',null,layer);fin.style.cssText='position:absolute;left:0;top:0;z-index:6';
+ addStamp(fin,'MISSÃO CUMPRIDA',at('s11','vencedor')-0.1,1180,860,-8,{size:64});
+ const fade=document.getElementById('fade');
+ ITEMS.push(t=>{fade.style.opacity=Math.max(1-P(t,0,0.6),P(t,TOTAL-1.3,TOTAL-0.15));});
+}
+
+// ===== mapa estilo carta náutica =====
+function buildMap(){
+ const m=document.getElementById('map');const c='rgba(185,220,214,';
+ const g=svgEl('g',{},m);
+ for(let x=0;x<=1920;x+=120)svgEl('line',{x1:x,y1:0,x2:x,y2:1080,stroke:c+'.07)','stroke-width':1},g);
+ for(let y=0;y<=1080;y+=120)svgEl('line',{x1:0,y1:y,x2:1920,y2:y,stroke:c+'.07)','stroke-width':1},g);
+ // Terra
+ const E={x:330,y:720,r:175};svgEl('circle',{cx:E.x,cy:E.y,r:E.r,fill:'rgba(120,170,165,.13)',stroke:c+'.55)','stroke-width':2.5},g);
+ for(let i=-2;i<=2;i++)svgEl('ellipse',{cx:E.x,cy:E.y+i*55,rx:Math.sqrt(E.r*E.r-(i*55)**2),ry:9,fill:'none',stroke:c+'.18)'},g);
+ for(let i=1;i<4;i++)svgEl('ellipse',{cx:E.x,cy:E.y,rx:E.r*i/4,ry:E.r,fill:'none',stroke:c+'.18)'},g);
+ svgEl('path',{d:`M${E.x-90} ${E.y-70} q40 -40 90 -10 q20 40 -20 70 q-10 50 30 90 q-60 10 -80 -40 q-40 -40 -20 -110z M${E.x+40} ${E.y-10} q50 -20 80 20 q0 60 -50 80 q-40 -40 -30 -100z`,fill:c+'.12)',stroke:c+'.3)'},g);
+ // Lua
+ const M={x:1120,y:300,r:80};svgEl('circle',{cx:M.x,cy:M.y,r:M.r,fill:'rgba(120,170,165,.12)',stroke:c+'.55)','stroke-width':2.5},g);
+ [[-25,-20,14],[20,15,10],[-10,30,8],[30,-30,7],[0,0,5]].forEach(([dx,dy,r])=>svgEl('circle',{cx:M.x+dx,cy:M.y+dy,r,fill:'none',stroke:c+'.35)'},g));
+ // órbita da Lua
+ svgEl('circle',{cx:E.x,cy:E.y,r:Math.hypot(M.x-E.x,M.y-E.y),fill:'none',stroke:c+'.12)','stroke-dasharray':'4 10'},g);
+ const txt=(s,x,y,size=26)=>{const tx=svgEl('text',{x,y,fill:c+'.75)','font-family':'Courier Prime','font-weight':700,'font-size':size,'letter-spacing':6},g);tx.textContent=s;return tx;};
+ txt('T E R R A',E.x-85,E.y+E.r+55);txt('L U A',M.x-45,M.y+M.r+50);
+ txt('— 384.400 KM —',520,330,24);
+ // trajetória (vermelho tracejado)
+ const path='M'+(E.x+120)+' '+(E.y+125)+' C 760 880, 1000 640, 1090 430 C 1130 340, 1260 300, 1230 240 C 1190 180, 1080 200, 1040 260';
+ const tr=svgEl('path',{d:path,fill:'none',stroke:'#c4291f','stroke-width':5,'stroke-dasharray':'16 12','stroke-linecap':'round'},g);
+ const L=tr.getTotalLength();const mask=svgEl('mask',{id:'mk'},m);const mp=svgEl('path',{d:path,fill:'none',stroke:'#fff','stroke-width':10},mask);
+ mp.style.strokeDasharray=L;tr.setAttribute('mask','url(#mk)');
+ const dot=svgEl('circle',{r:9,fill:'#c4291f'},g);
+ // rótulo "4 DIAS"
+ const lb=svgEl('g',{},g);svgEl('rect',{x:830,y:690,width:200,height:40,fill:'#0d0d0d'},lb);
+ const lt=svgEl('text',{x:846,y:718,fill:'#f1f1f1','font-family':'Courier Prime','font-weight':700,'font-size':22,'letter-spacing':2.5},lb);
+ const t0=34.55,tL=at('s06','dias')-0.1;SFX.push({t:t0,type:'scribble',d:2.2});SFX.push({t:tL,type:'type',n:9,cps:20});
+ ITEMS.push(t=>{const on=P(t,34.0,34.7)*(1-P(t,39.1,39.6));m.style.opacity=on;m.style.display=on>0?'block':'none';
+  const k=eio(P(t,t0,t0+2.4));mp.style.strokeDashoffset=L*(1-k);const pt=tr.getPointAtLength(L*k);dot.setAttribute('cx',pt.x);dot.setAttribute('cy',pt.y);
+  const n=Math.floor((t-tL)*20);lb.style.opacity=t>tL?1:0;lt.textContent='4 DIAS'.slice(0,clamp(n,0,6))+(Math.floor(t*2.4)%2?'_':' ');
+  g.style.transform=`translate(${lerp(10,-30,P(t,34,39.6))}px,0) scale(${lerp(1,1.03,P(t,34,39.6))})`;});
+}
+
+// ===== animação 2D estilo vintage (sépia, recortes chapados, 12 fps) =====
+function buildAnim(){
+ const A=document.getElementById('anim');const ink='#3a2a1a',ink2='#5a432b',ink3='#7a6040';
+ const s=svgEl('svg',{width:1920,height:1080,style:'position:absolute;left:0;top:0'},A);
+ const world=svgEl('g',{},s);
+ // estrelas
+ for(let i=0;i<70;i++)svgEl('circle',{cx:hash(i)*1920,cy:hash(i+99)*620,r:1+hash(i+7)*2.2,fill:ink,opacity:.55},world);
+ // Terra no céu
+ const ea=svgEl('g',{transform:'translate(860,190)'},world);
+ svgEl('circle',{r:62,fill:'none',stroke:ink,'stroke-width':4},ea);svgEl('path',{d:'M0 -62 A62 62 0 0 1 0 62 A30 62 0 0 0 0 -62',fill:ink2},ea);
+ // solo lunar em camadas
+ svgEl('path',{d:'M0 760 Q200 730 420 752 T860 745 T1300 760 T1920 740 L1920 1080 L0 1080Z',fill:ink3},world);
+ svgEl('path',{d:'M0 830 Q300 805 640 828 T1280 822 T1920 815 L1920 1080 L0 1080Z',fill:ink2},world);
+ [[300,900,120,16],[980,960,170,20],[1650,920,110,14],[620,1010,90,10],[1380,1030,140,14]].forEach(([x,y,rx,ry])=>
+   svgEl('ellipse',{cx:x,cy:y,rx,ry,fill:ink,opacity:.55},world));
+ // pedras (campo de pedregulhos)
+ const rocks=svgEl('g',{},world);
+ [[880,812,46],[960,818,30],[1040,808,58],[1120,820,34],[1190,812,42],[1010,826,22],[1250,822,26]].forEach(([x,y,r],i)=>
+   svgEl('path',{d:`M${x-r} ${y} Q${x-r*.9} ${y-r*.9} ${x-r*.1} ${y-r} Q${x+r*.8} ${y-r*.85} ${x+r} ${y} Z`,fill:ink},rocks));
+ // módulo lunar (silhueta)
+ const lm=svgEl('g',{},world);
+ const flame=svgEl('path',{d:'M-22 64 L0 150 L22 64Z',fill:'#e9d9b0',stroke:ink2,'stroke-width':3},lm);
+ svgEl('path',{d:'M-26 40 L-34 70 L34 70 L26 40Z',fill:ink},lm); // bocal
+ svgEl('path',{d:'M-80 0 L-62 -20 L62 -20 L80 0 L80 40 L62 52 L-62 52 L-80 40Z',fill:ink2,stroke:ink,'stroke-width':4},lm); // estágio de descida
+ svgEl('path',{d:'M-50 -20 L-60 -70 L-30 -110 L35 -110 L62 -70 L50 -20Z',fill:ink,},lm); // estágio de subida
+ svgEl('path',{d:'M-20 -95 L-8 -95 L-4 -70 L-24 -70Z',fill:'#e9d9b0'},lm); // janela
+ svgEl('line',{x1:20,y1:-110,x2:30,y2:-150,stroke:ink,'stroke-width':4},lm);svgEl('circle',{cx:30,cy:-150,r:9,fill:'none',stroke:ink,'stroke-width':4},lm);
+ [[-1],[1]].forEach(([d])=>{svgEl('path',{d:`M${d*70} 30 L${d*128} 100`,stroke:ink,'stroke-width':8},lm);
+   svgEl('path',{d:`M${d*55} 50 L${d*128} 100`,stroke:ink,'stroke-width':4},lm);svgEl('ellipse',{cx:d*132,cy:104,rx:24,ry:6,fill:ink},lm);});
+ svgEl('line',{x1:-62,y1:20,x2:62,y2:20,stroke:ink,'stroke-width':2},lm);
+ // poeira do pouso
+ const dust=svgEl('g',{},world);const puffs=[];
+ for(let i=0;i<14;i++)puffs.push(svgEl('ellipse',{cx:0,cy:0,rx:10,ry:6,fill:'#cbb68c',opacity:0},dust));
+ // HUD
+ const hud=(txt,x,y,cls='')=>{const h=el('div','hud '+cls,A);h.style.left=x+'px';h.style.top=y+'px';h.textContent=txt;return h;};
+ const h0=hud('20 JULHO 1969 · DESCIDA DO EAGLE',70,60);
+ const hAl=hud('⚠ ALARME 1202',70,120,'red');const hP=hud('PEDRAS NO LOCAL DE POUSO',820,690);
+ const hMan=hud('CONTROLE MANUAL',1350,120);const hFuel=hud('COMBUSTÍVEL: 60 S',1350,180);
+ const rc=el('div',null,A);rc.style.cssText='position:absolute;left:0;top:0';addCircle(rc,1060,800,250,70,at('s07','pedras')-0.05,0.5,8,6);
+ // linha da trajetória manual
+ const tm=svgEl('path',{d:'M1000 560 Q1250 520 1520 640',fill:'none',stroke:'#a3221a','stroke-width':4,'stroke-dasharray':'12 10'},s);
+ const tmL=tm.getTotalLength();tm.style.strokeDasharray=tmL;
+ const tA=39.35,tEnd=50.95,tAl=at('s07','alarmes')-0.2,tRock=at('s07','pedras'),tMan=at('s07','controle')-0.1,tFuel=at('s07','combustível')-0.6,tLand=at('s08','pousou')-0.05;
+ addStamp(A,'POUSOU',tLand+0.15,1500,420,-10,{size:92});
+ const hT=hud('20:17 UTC · 25 S DE COMBUSTÍVEL',1150,560);
+ SFX.push({t:tA,type:'projector',d:tEnd-tA});SFX.push({t:tAl,type:'alarm',d:2.2});SFX.push({t:tLand,type:'land'});
+ SFX.push({t:tMan,type:'type',n:15,cps:30});SFX.push({t:tFuel,type:'type',n:17,cps:30});
+ ITEMS.push(t=>{
+  const on=P(t,tA-0.2,tA+0.35)*(1-P(t,tEnd-0.45,tEnd));A.style.opacity=on;A.style.display=on>0?'block':'none';if(!on)return;
+  const tq=Math.floor(t*12)/12; // animação "em 12 quadros por segundo"
+  // trajeto: entra pelo alto, desce até as pedras, desvia, pousa
+  let x,y,rot;
+  const k1=P(tq,tA,tRock), k2=P(tq,tMan,tLand-1.2), k3=P(tq,tLand-1.2,tLand);
+  if(tq<tMan){const q=eo(k1);x=lerp(330,1000,q);y=lerp(120,560,q)+Math.sin(tq*3)*6;rot=lerp(18,6,q);}
+  else if(tq<tLand-1.2){const q=eio(k2);x=lerp(1000,1520,q);y=lerp(560,600,q)-Math.sin(q*Math.PI)*45;rot=lerp(6,-8,Math.sin(q*Math.PI))+0;}
+  else {const q=eo(k3);x=1520;y=lerp(600,706,q);rot=lerp(0,0,q);}
+  if(t>=tLand){y=706;rot=0;}
+  lm.setAttribute('transform',`translate(${x},${y}) rotate(${rot}) scale(.95)`);
+  const burning=t<tLand;flame.style.display=burning?'block':'none';
+  flame.setAttribute('transform',`scale(1,${0.75+0.45*hash(Math.floor(t*12))})`);
+  // poeira
+  const dk=P(t,tLand-0.7,tLand+1.6);puffs.forEach((p,i)=>{const a=(i/14-0.5)*2,sp=hash(i+3);
+    p.setAttribute('cx',1520+a*(80+380*eo(dk))*(0.6+sp*.6));p.setAttribute('cy',812-30*eo(dk)*sp);
+    p.setAttribute('rx',20+90*eo(dk)*sp);p.setAttribute('ry',8+26*eo(dk));p.setAttribute('opacity',dk>0&&dk<1?(1-dk)*0.85:0);});
+  // HUD
+  const vis=(e,t0,t1=99)=>{e.style.opacity=(t>=t0&&t<t1)?1:0;};
+  vis(h0,tA+0.3);hAl.style.opacity=(t>=tAl&&t<tRock+0.4&&Math.floor((t-tAl)*3)%2==0)?1:0;
+  vis(hP,tRock);vis(hMan,tMan);vis(hFuel,tFuel);vis(hT,tLand+0.5);
+  const fuel=Math.round(lerp(60,25,P(t,tFuel,tLand)));hFuel.textContent='COMBUSTÍVEL: '+fuel+' S';hFuel.className='hud'+(fuel<35&&t<tLand&&Math.floor(t*4)%2?' red':'');
+  rc.style.opacity=t<tMan+0.6?1:1-P(t,tMan+0.6,tMan+1);
+  tm.style.strokeDashoffset=tmL*(1-eio(P(t,tMan,tMan+1.2)));tm.style.opacity=t<tLand?1:1-P(t,tLand,tLand+0.5);
+  // efeitos de película: tremor do quadro, oscilação, riscos
+  const f=Math.floor(t*25);world.setAttribute('transform',`translate(${(hash(f)-.5)*3},${(hash(f+5)-.5)*3})`);
+  A.style.filter=`brightness(${0.94+0.09*hash(f*3)}) contrast(1.05)`;
+  scr.forEach((l,i)=>{const on=hash(f*7+i)>0.55;l.setAttribute('opacity',on?0.35:0);l.setAttribute('x1',hash(f*13+i)*1920);l.setAttribute('x2',+l.getAttribute('x1')+(hash(i+f)-.5)*6);});
+ });
+ const scr=[0,1,2].map(i=>svgEl('line',{x1:0,y1:0,x2:0,y2:1080,stroke:'#2b2116','stroke-width':1.5,opacity:0},s));
+ const frame=svgEl('rect',{x:24,y:24,width:1872,height:1032,fill:'none',stroke:'#2b2116','stroke-width':6,rx:18,opacity:.5},s);
+}
+
+// ===== efeitos globais e laço de render =====
+const bg=document.getElementById('bg'),grains=[...document.querySelectorAll('.grain')],flick=document.getElementById('flick');
+function renderFrame(t){
+  const f=Math.floor(t*25);
+  bg.style.transform=`translate(${-190+Math.sin(t*0.07)*60}px,${-160+Math.cos(t*0.05)*40}px)`;
+  grains.forEach((g,i)=>g.style.display=i==f%6?'block':'none');grains[f%6].style.transform=`translate(${(hash(f)-.5)*40}px,${(hash(f+1)-.5)*40}px) scale(1.05)`;
+  flick.style.opacity=0.03+0.05*hash(f*1.7);
+  // escurece o fundo na cartela de título
+  ITEMS.forEach(fn=>fn(t));
+}
+window.init=function(cues,total){CUES=cues;TOTAL=total;build();return SFX;};
+window.renderFrame=renderFrame;
+</script></body></html>
