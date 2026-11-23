@@ -157,3 +157,13 @@ B.title('COMEÇOU COM MEDO.','Terminou com um aperto de mão.','A corrida tinha 
 B.card('06_pegada_no_solo_lunar.jpg','E as pegadas deixadas na Lua',{zoom:[1.05,1.2],labels:[['AINDA LÁ · HÁ MAIS DE 50 ANOS','milhões de anos']]});
 B.card('c08_nascer_da_terra_earthrise.jpg','A prova de que',{zoom:[1.0,1.12]});
 }
+// ---------- cenas extras para quebrar trechos longos ----------
+const _orig=buildScenes;buildScenes=function(){_orig();CUR=0;
+ CH('Do lado soviético');B.title('NO MUNDO, SÓ UM APELIDO:','O Projetista-Chefe.','No mundo, ele era conhecido',{big:'Projetista-Chefe',size:110});
+ CH('Para os americanos, foi um choque');B.card('c01_v2_decolando_white_sands_1946.jpg','Se os soviéticos conseguiam',{zoom:[1.3,1.45],labels:[['FOGUETE = MÍSSIL',0.4]]});
+ CH('Enquanto os Estados Unidos se organizavam');B.title('MAIS TEMPO EM ÓRBITA QUE','Todos os americanos juntos.','Mais tempo do que todos',{big:'Mais tempo do que todos',size:92});
+ CH('No fim de 1968');B.card('c08_nascer_da_terra_earthrise.jpg','Ele pegou a câmera',{zoom:[1.6,1.8],focus:'62% 37%',labels:[['FOTO AS08-14-2383',0.4]]});
+ CH('No dia 20 de julho de 1969, o módulo');B.card('c10_controle_missao_houston.jpg','Um jovem engenheiro',{zoom:[1.5,1.65],labels:[['"GO!" — PODEM SEGUIR',0.6]]});
+ CH('E os soviéticos?');B.title('UMA DAS MAIORES EXPLOSÕES','Não nucleares da história.','Foi uma das maiores explosões',{big:'não nucleares',size:96});
+ B.card('c12_aperto_de_mao_apollo_soyuz.jpg','Pela escotilha',{pos:'l',zoom:[1.4,1.6],labels:[['ÓRBITA DA TERRA · 1975',0.4]]});
+};

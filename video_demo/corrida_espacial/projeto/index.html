@@ -37,10 +37,13 @@ svg{overflow:visible}
 <body>
 <div id="stage">
   <div id="bg" class="abs"></div>
+  <div id="back" class="abs" style="width:1920px;height:1080px;filter:brightness(.55) saturate(.7)"></div>
   <div id="layer" class="abs"></div>
   <div id="vig" class="abs"></div>
   <div id="grains"></div>
   <div id="flick" class="abs"></div>
+  <div id="leak" class="abs" style="width:1920px;height:1080px;opacity:0;z-index:54;mix-blend-mode:screen;background:radial-gradient(ellipse 60% 90% at 85% 40%,rgba(255,150,60,.9),rgba(255,80,20,.4) 40%,rgba(0,0,0,0) 75%);background-size:180% 100%"></div>
+  <div id="flash" class="abs" style="width:1920px;height:1080px;background:#fff;opacity:0;z-index:55"></div>
   <div id="fade" class="abs"></div>
 </div>
 <script src="engine.js"></script>
