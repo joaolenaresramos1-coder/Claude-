@@ -11,7 +11,7 @@ def fbm(w,h,octs=6,base=4):
 # teal mottled background
 W,H=2300,1400; n=fbm(W,H,7,3); n2=fbm(W,H,4,12)
 v=(0.65*n+0.35*n2)[...,None]
-dark=np.array([14,32,33]); light=np.array([44,78,76])
+dark=np.array([34,66,66]); light=np.array([82,128,122])
 bg=dark+(light-dark)*v**1.3
 bg+=rng.normal(0,3,(H,W,1))
 Image.fromarray(np.clip(bg,0,255).astype(np.uint8)).save(f"{A}/bg_teal.jpg",quality=92)
