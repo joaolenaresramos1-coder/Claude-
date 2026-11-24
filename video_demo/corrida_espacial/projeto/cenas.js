@@ -26,14 +26,14 @@ B.title('O ESPAÇO ERA SÓ UM DETALHE.','Por enquanto.','Começava a Guerra Fria
 // ---------- 2 · O BIPE ----------
 CH('No dia 4 de outubro de 1957');
 B.chapter(2,'O bipe que assustou a América','No dia 4 de outubro de 1957');
-B.card('c02_sputnik_1.jpg','No topo dele',{labels:[['4 OUT 1957 · CAZAQUISTÃO',0.5],['SPUTNIK · 58 CM','bola de praia']],circle:[0.48,0.45,0.18,0.25,'quatro antenas']});
+B.card('c02_sputnik_1.jpg','No topo dele',{labels:[['4 OUT 1957 · CAZAQUISTÃO',0.5],['SPUTNIK · 58 CM','bola de praia']],circle:[0.215,0.43,0.14,0.19,'bola de praia']});
 B.anim('orbita','Ela não fazia quase nada',{label:'SPUTNIK 1 · 4 OUT 1957',sub:'1 VOLTA A CADA 96 MINUTOS',extra:'SOBRE OS EUA VÁRIAS VEZES POR DIA',extraAt:'passava por cima dos Estados Unidos'});
 B.note([['SE ELES PÕEM UMA BOLA DE METAL',0],['EM ÓRBITA...',0.9],['',0],['...PODEM PÔR UMA BOMBA','também conseguiam colocar uma bomba'],['SOBRE NOVA YORK.','Nova York']],'Para os americanos, foi um choque',{stamp:['AMEAÇA','Nova York',0.7,0.82]});
 B.card('c02_cadela_laika_1957.jpg','Um mês depois, veio o segundo golpe',{labels:[['SPUTNIK 2 · 3 NOV 1957','Sputnik 2'],['LAIKA','Laika']]});
 B.note([['VANGUARD TV-3',0],['6 DEZ 1957 · AO VIVO NA TV','diante das câmeras'],['',0],['ALTURA ATINGIDA: ~1 METRO','Ele subiu pouco mais de um metro']],'Os Estados Unidos correram para responder',{stamp:['EXPLODIU','explodiu na plataforma',0.66,0.78,-12,80]});
 B.title('OS JORNAIS NÃO PERDOARAM:','“Flopnik”','Os jornais não perdoaram',{big:'Flopnik'});
 B.card('c02_lancamento_explorer1_1958.jpg','O primeiro satélite americano',{pos:'l',labels:[['EXPLORER 1 · 31 JAN 1958',0.6]]});
-B.card('c02_explorer1_pickering_van_allen_von_braun.jpg','construído pela equipe de von Braun',{pos:'r',side:true,until:'O nome dela era NASA',labels:[['PICKERING · VAN ALLEN · VON BRAUN',0.6]],circle:[0.84,0.6,0.12,0.3,'von Braun']});
+B.card('c02_explorer1_pickering_van_allen_von_braun.jpg','construído pela equipe de von Braun',{pos:'r',side:true,until:'O nome dela era NASA',labels:[['PICKERING · VAN ALLEN · VON BRAUN',0.6]],circle:[0.73,0.38,0.1,0.13,'von Braun']});
 B.title('1958 · NOVA AGÊNCIA CIVIL','NASA.','O nome dela era NASA',{big:'NASA',size:170});
 
 // ---------- 3 · O PRIMEIRO HOMEM NO ESPAÇO ----------
@@ -97,7 +97,7 @@ B.note([['RELATÓRIO DE INTELIGÊNCIA · 1968',0],['> URSS PRONTA PARA MANDAR','
 B.map('A NASA tomou uma decisão ousada',{label:'APOLLO 8 · DIRETO À LUA',labelAt:'diretamente até a Lua'});
 B.card('c08_tripulacao_apollo8.jpg','No dia 21 de dezembro de 1968',{labels:[['21 DEZ 1968',0.5],['BORMAN · LOVELL · ANDERS','Frank Borman']]});
 B.card('03_decolagem_saturno_v_16_julho_1969.jpg','no gigantesco foguete Saturno Cinco',{labels:[['SATURNO V',0.5],['24 DEZ · ÓRBITA DA LUA','véspera de Natal']]});
-B.card('c08_nascer_da_terra_earthrise.jpg','Na quarta volta',{labels:[['24 DEZ 1968 · BILL ANDERS',0.6],['"NASCER DA TERRA"','Nascer da Terra']],circle:[0.62,0.37,0.1,0.13,'A Terra, azul e branca']});
+B.card('c08_nascer_da_terra_earthrise.jpg','Na quarta volta',{labels:[['24 DEZ 1968 · BILL ANDERS',0.6],['"NASCER DA TERRA"','Nascer da Terra']],circle:[0.62,0.52,0.09,0.08,'A Terra, azul e branca']});
 B.card('09_eagle_retorno_terra_ao_fundo.jpg','Naquela noite',{labels:[['VÉSPERA DE NATAL · AO VIVO',0.6]]});
 B.title('PEQUENA. FRÁGIL.','Sozinha na escuridão.','Pela primeira vez, a humanidade viu',{big:'sozinha na escuridão',size:100});
 B.map('A Lua estava ao alcance',{label:'FALTAVA POUSAR',labelAt:'Faltava apenas pousar'});
@@ -116,7 +116,7 @@ B.map('Foram três dias de viagem',{label:'3 DIAS',labelAt:'três dias'});
 // ---------- 10 · A DESCIDA ----------
 CH('No dia 20 de julho de 1969, o módulo');
 B.chapter(10,'A descida','No dia 20 de julho de 1969, o módulo');
-B.card('04_modulo_lunar_eagle_separacao.jpg','o módulo lunar Eagle se separou',{labels:[['20 JUL 1969 · EAGLE',0.5],['COLLINS FICA NA COLUMBIA','onde Collins']],circle:[0.5,0.38,0.22,0.22,'se separou']});
+B.card('04_modulo_lunar_eagle_separacao.jpg','o módulo lunar Eagle se separou',{labels:[['20 JUL 1969 · EAGLE',0.5],['COLLINS FICA NA COLUMBIA','onde Collins']],circle:[0.5,0.45,0.25,0.25,'se separou']});
 const D={start:'Armstrong e Aldrin começaram a descida',alarm:'Alarme 1202',rocks:'pedras do tamanho de carros',manual:'Armstrong assumiu o controle manual',f60:'sessenta segundos',f30:'trinta segundos',land:'Contato.'};
 B.anim('descida','Armstrong e Aldrin começaram a descida',D);
 B.card('c10_controle_missao_houston.jpg','Em Houston, o controle da missão',{labels:[['HOUSTON · CONTROLE DA MISSÃO',0.5],['STEVE BALES · 26 ANOS','Steve Bales']]});
@@ -131,7 +131,7 @@ B.card('08_controle_da_missao_comemora.jpg','Em Houston, uma sala inteira',{labe
 CH('Seis horas depois');
 B.chapter(11,'O primeiro passo','Seis horas depois');
 B.card('05_armstrong_dentro_do_modulo_lunar.jpg','Neil Armstrong saiu de costas',{pos:'l',until:'puxou uma alavanca',labels:[['NEIL ARMSTRONG',0.4]]});
-B.card('c11_aldrin_desce_escada.jpg','por uma pequena escada',{pos:'r',side:true,until:'puxou uma alavanca',labels:[['A ESCADA DO EAGLE',0.6]],circle:[0.45,0.5,0.22,0.3,'pequena escada']});
+B.card('c11_aldrin_desce_escada.jpg','por uma pequena escada',{pos:'r',side:true,until:'puxou uma alavanca',labels:[['A ESCADA DO EAGLE',0.6]],circle:[0.55,0.42,0.15,0.2,'pequena escada']});
 B.card('c10_controle_missao_houston.jpg','puxou uma alavanca',{labels:[['TV AO VIVO',0.5],['600 MILHÕES ASSISTINDO','seiscentos milhões']]});
 B.card('06_pegada_no_solo_lunar.jpg','Ele pisou na Lua',{labels:[['21 JUL 1969 · 02:56 UTC',0.5]],circle:[0.63,0.64,0.24,0.2,'duas horas e cinquenta e seis']});
 B.title('UM PEQUENO PASSO PARA UM HOMEM,','Um salto gigantesco.','E disse:',{big:'um salto gigantesco',size:112});
@@ -185,4 +185,21 @@ const _orig2=buildScenes;buildScenes=function(){_orig2();CUR=0;
  B.clip('escada_armstrong','Ele pisou na Lua',{off:300,labels:[['21 JUL 1969 · 02:56 UTC',0.4]]});
  B.clip('aldrin_desce','Dezenove minutos depois',{labels:[['BUZZ ALDRIN',0.4]]});
  B.clip('bandeira','Fincaram uma bandeira',{labels:[['A BANDEIRA',0.4]]});
+};
+// ---------- cinejornais da época (Universal Newsreel, domínio público) ----------
+const _orig3=buildScenes;buildScenes=function(){_orig3();CUR=0;
+ CH('No dia 4 de outubro de 1957');
+ B.clip('n_sputnik_anim','Se os soviéticos conseguiam',{labels:[['OUT 1957 · "NOVA LUA"',0.4]]});
+ B.clip('n_vanguard_rampa','diante das câmeras de televisão',{labels:[['VANGUARD · CABO CANAVERAL',0.4]]});
+ B.clip('n_vanguard_explode','Ele subiu pouco mais de um metro',{labels:[['6 DEZ 1957 · AO VIVO NA TV',0.3]],stamp:['EXPLODIU','explodiu na plataforma',0.62,0.75,-12,80]});
+ B.clip('n_explorer_rampa','O primeiro satélite americano',{labels:[['EXPLORER 1 · JUPITER-C',0.4]]});
+ B.clip('n_explorer_decola','só chegou à órbita',{pos:'l',labels:[['31 JAN 1958 · DECOLAGEM',0.3]]});
+ CH('Os soviéticos continuavam na frente. Em 1959');
+ B.clip('n_gagarin_moscou','Em poucas horas',{labels:[['MOSCOU · ABRIL 1961',0.4]]});
+ B.clip('n_gagarin_saudacao','o homem mais famoso do mundo',{labels:[['IÚRI GAGARIN',0.3]]});
+ B.clip('n_shepard','Foi uma vitória para os americanos',{labels:[['ALAN SHEPARD · MAIO 1961',0.4]]});
+ CH('O jovem presidente John Kennedy');
+ B.clip('n_kennedy_vonbraun','Kennedy precisava de uma vitória',{labels:[['KENNEDY E VON BRAUN',0.4]]});
+ B.clip('n_kennedy_rice','No ano seguinte',{labels:[['12 SET 1962 · RICE STADIUM',0.4]]});
+ B.clip('n_glenn_decola','A promessa estava feita',{labels:[['1962 · JOHN GLENN DECOLA',0.4]]});
 };
