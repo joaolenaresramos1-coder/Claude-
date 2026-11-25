@@ -280,10 +280,15 @@ function finalize(){
    const poolFor=c=>{if(pools[c])return pools[c];const tag=String(c).padStart(2,'0');
      let p=Object.keys(IMG).filter(n=>n.startsWith('c'+tag+'_')||n.startsWith('b_c'+tag+'_'));
      if(c>=9)p=p.concat(Object.keys(IMG).filter(n=>/^0\d_/.test(n)));
+     p=p.concat(Object.keys(IMG).filter(n=>n.startsWith('lv_')));
      const clipsBy=[];
      p=p.concat(clipsBy.map(x=>'clip:'+x));if(p.length<4)p=p.concat(Object.keys(IMG));return pools[c]=p;};
+   const LAST={},USES={};BEATS.forEach(x=>{if(x.kind==='card'&&x.img&&!x.filler){USES[x.img]=(USES[x.img]||0)+1;(LAST[x.img]=LAST[x.img]||[]).push(x.t0);}});
+   const okImg=(n,t,avoid)=>n!==avoid&&!n.startsWith('clip:')&&(LAST[n]||[]).every(q=>Math.abs(t-q)>120)&&(USES[n]||0)<2;
+   const pickT=(c,avoid,t)=>{let p=poolFor(c).filter(n=>okImg(n,t,avoid));if(!p.length)p=Object.keys(IMG).filter(n=>okImg(n,t,avoid));if(!p.length)return null;
+     p.sort((a,b)=>((USES[a]||0)-(USES[b]||0))||(hash(a.length+t)-hash(b.length+t)));const n=p[0];USES[n]=(USES[n]||0)+1;(LAST[n]=LAST[n]||[]).push(t);return n;};
    const recent=[];const pick=(c,avoid)=>{const p=poolFor(c);if(!p.length)return null;let best=null,bu=1e9;p.forEach((n,i)=>{if(n===avoid||recent.includes(n))return;const u=(used[n]||0)*10+hash(i+c*7)*3;if(u<bu){bu=u;best=n;}});if(!best)best=p.find(n=>n!==avoid)||p[0];recent.push(best);if(recent.length>4)recent.shift();used[best]=(used[best]||0)+1;return best;};
-   const fill=(a,b,prevImg,nextImg)=>{const n=Math.max(1,Math.round((b-a)/3.2));let last=prevImg;for(let i=0;i<n;i++){const t=a+(b-a)*i/n;let img=pick(chOf(t+0.1),last);if(img&&i==n-1&&img===nextImg)img=pick(chOf(t+0.1),nextImg);if(!img)return;last=img;
+   const fill=(a,b,prevImg,nextImg)=>{const n=Math.max(1,Math.round((b-a)/3.2));let last=prevImg;for(let i=0;i<n;i++){const t=a+(b-a)*i/n;let img=pickT(chOf(t+0.1),last,t);if(img&&i==n-1&&img===nextImg)img=pickT(chOf(t+0.1),nextImg,t);if(!img){B.palavraAt(t);last=null;continue;}last=img;
      const save=CUR;BEATS.push({kind:'card',filler:true,cur:CUR,t0:t,until:null,side:false,make:(bb,idx)=>{}});BEATS.pop();
      B.card(img,null,{at:t,zoom:[1.0,1.05],off:Math.floor(hash(t*3)*80)});}};
    const fills=[];
@@ -297,7 +302,7 @@ function finalize(){
   {let m2=BEATS.filter(b=>!b.side);for(let i=m2.length-1;i>0;i--){if(m2[i].img&&m2[i].img===m2[i-1].img){const v=m2[i].filler?m2[i]:(m2[i-1].filler?m2[i-1]:m2[i]);BEATS.splice(BEATS.indexOf(v),1);}}main=BEATS.filter(b=>!b.side);}
   for(let i=0;i<main.length;i++){const b=main[i],n=main[i+1];
     if(b.chapter){b.t1=b.tend;if(n&&n.t0>b.tend+2.5&&!n.chapter){const num=BEATS.filter(x=>x.chapter&&x.t0<=b.t0).length;const tag='c'+String(num).padStart(2,'0')+'_';
-      const cand=Object.keys(IMG).filter(k=>k.startsWith(tag)&&k!==n.img);const im=cand.length?cand[Math.floor(hash(b.t0)*cand.length)]:null;
+      const far=k=>BEATS.every(x=>x.img!==k||Math.abs(x.t0-b.tend)>120);let cand=Object.keys(IMG).filter(k=>k.startsWith(tag)&&k!==n.img&&far(k));if(!cand.length)cand=Object.keys(IMG).filter(k=>k.startsWith('lv_')&&far(k));const im=cand.length?cand[Math.floor(hash(b.t0)*cand.length)]:null;
       if(im){B.card(im,null,{at:b.tend,filler:true,zoom:[1,1.05]});const nb=BEATS[BEATS.length-1];nb.t1=n.t0;}else n.t0=b.tend;}
      else if(n&&n.t0>b.tend+0.3&&!n.chapter)n.t0=b.tend;}
     else b.t1=b.until||(n?n.t0:TOTAL-0.2);}

@@ -59,10 +59,10 @@ CH('Mesmo depois do fracasso');
 B.chapter(3,'Uma colônia de famílias','Mesmo depois do fracasso');
 B.card('c01_bruno_lucchesi_s_1976_statue_of_sir_walt.jpg','Walter Raleigh não desistiu',{labels:[['RALEIGH NÃO DESISTE',0.4]]});
 B.silhueta('HOMENS · MULHERES · CRIANÇAS','Não seriam soldados',{n:5});
-B.card('c02_the_wyfe_of_an_herowan_of_secotan.jpg','O governador escolhido',{labels:[['GOVERNADOR: JOHN WHITE',0.4],['O ARTISTA DE 1585','o artista da primeira']]});
+B.card('lv_grande_senhor_weroan.jpg','O governador escolhido',{labels:[['GOVERNADOR: JOHN WHITE',0.4],['O ARTISTA DE 1585','o artista da primeira']]});
 B.note([['A FAMÍLIA DE JOHN WHITE:',0],['> ELEANOR, A FILHA (GRÁVIDA)','a filha, Eleanor'],['> ANANIAS DARE, O GENRO','Ananias Dare']],'Com ele viajavam a filha',{});
 B.anim('oceano','O destino planejado não era Roanoke',{rotulo:'1587 · DESTINO: CHESAPEAKE?'});
-B.card('c00_map_of_the_coast_of_virginia_in_1585.jpg','Mas o piloto da frota',{labels:[['PILOTO: SIMÃO FERNANDES',0.4]],stamp:['RECUSA','se recusou a levá-los']});
+B.card('lv_chegada_dos_ingleses.jpg','Mas o piloto da frota',{labels:[['PILOTO: SIMÃO FERNANDES',0.4]],stamp:['RECUSA','se recusou a levá-los']});
 B.numero(115,'~',' COLONOS','DEIXADOS EM ROANOKE','os cerca de cento e quinze colonos',{sub:'JULHO DE 1587'});
 B.checklist('A SITUAÇÃO DA COLÔNIA',[['CHEGARAM TARDE PARA PLANTAR',0,'tarde demais para plantar'],['ILHA HOSTIL',0,'vistos com desconfiança'],['DEPENDENTES DE SUPRIMENTOS',0,'dependiam de um navio']],'Para muitos historiadores',{});
 
@@ -72,7 +72,7 @@ B.chapter(4,'Virginia Dare','Quando chegaram, os colonos procuraram');
 B.card('c07_fort_raleigh_fort_u_s_64_264_manteo_dare.jpg','Quando chegaram, os colonos procuraram',{labels:[['O LOCAL DO FORTE',0.4]]});
 B.title('DOS QUINZE HOMENS,','Restaram apenas ossos.','Encontraram apenas os ossos',{big:'apenas os ossos',size:110});
 B.card('c02_the_tomb_of_the_weroans.jpg','Poucos dias depois',{labels:[['GEORGE HOWE É MORTO',0.6]]});
-B.card('c02_secotan.jpg','Mas havia aliados',{labels:[['MANTEO · O ALIADO',0.4]],stamp:['BATIZADO','ele foi batizado']});
+B.card('lv_jovem_de_secota.jpg','Mas havia aliados',{labels:[['MANTEO · O ALIADO',0.4]],stamp:['BATIZADO','ele foi batizado']});
 B.title('18 DE AGOSTO DE 1587','Nasce uma menina.','E, no dia 18 de agosto de 1587',{big:'nasceu uma menina',size:120});
 B.card('c04_0_baptism_of_virginia_dare.jpg','Ela recebeu o nome de Virginia',{labels:[['VIRGINIA DARE',0.4],['1ª CRIANÇA INGLESA NAS AMÉRICAS','primeira criança inglesa']]});
 
@@ -104,7 +104,7 @@ B.card('c07_0_scene_from_the_lost_colony_a_historical.jpg','As casas tinham sido
 B.anim('entalhe','Em uma árvore, estavam entalhadas',{palavra:'CRO',inicio:'três letras',porLetra:0.45,rotulo:'NA ÁRVORE'});
 B.anim('entalhe','E, em um dos troncos da paliçada',{palavra:'CROATOAN',inicio:'Croatoan.',porLetra:0.14,rotulo:'NA PALIÇADA'});
 B.checklist('O SINAL COMBINADO',[['NOME DO DESTINO: CROATOAN',1,'White procurou'],['CRUZ DE PERIGO',0,'Não havia cruz']],'White procurou o sinal combinado',{});
-B.card('c02_secotan.jpg','Croatoan era o nome da ilha',{labels:[['CROATOAN: O POVO DE MANTEO',0.4]]});
+B.card('lv_dama_de_secota.jpg','Croatoan era o nome da ilha',{labels:[['CROATOAN: O POVO DE MANTEO',0.4]]});
 
 // ---------- 8 ----------
 CH('Perto dali, os marinheiros');
@@ -112,14 +112,14 @@ B.chapter(8,'A tempestade','Perto dali, os marinheiros');
 B.note([['OS BAÚS DE WHITE:',0],['> DESENTERRADOS','desenterrados e revirados'],['> LIVROS E MAPAS RASGADOS','livros, mapas'],['> PINTURAS ESTRAGADAS','estragados pela chuva']],'Perto dali, os marinheiros',{stamp:['PERDIDO','estragados pela chuva']});
 B.card('c08_navio_na_tempestade.jpg','Uma tempestade violenta',{labels:[['A TEMPESTADE',0.4]],stamp:['ÂNCORAS PERDIDAS','perderam âncoras']});
 B.title('O CAPITÃO DECIDIU VOLTAR.','White nunca chegou a Croatoan.','O capitão decidiu voltar',{big:'nunca chegou a Croatoan',size:84});
-B.card('c02_the_wyfe_of_an_herowan_of_secotan.jpg','Ele voltou para a Inglaterra',{labels:[['JOHN WHITE NUNCA MAIS VOLTOU',0.5]]});
+B.card('lv_pagina_de_rosto_1590.jpg','Ele voltou para a Inglaterra',{labels:[['JOHN WHITE NUNCA MAIS VOLTOU',0.5]]});
 
 // ---------- 9 ----------
 CH('O que aconteceu com os colonos');
 B.chapter(9,'As teorias','O que aconteceu com os colonos');
 B.checklist('AS TEORIAS',[['FORAM VIVER COM OS CROATOAN','se mudado para Croatoan',''],['SE DIVIDIRAM E FORAM AO INTERIOR','se dividido',''],['MORTOS POR POWHATAN','Powhatan',''],['FOME, DOENÇA OU O MAR','morreram de fome','']].map(x=>[x[0],0,x[1]]),'O que aconteceu com os colonos',{});
 B.card('c02_how_the_chief_ladies_of_the_town_of_das.jpg','A explicação mais simples',{labels:[['TEORIA 1 · CROATOAN',0.4]]});
-B.card('c00_map_of_the_coast_of_virginia_in_1585.jpg','Outra possibilidade',{labels:[['TEORIA 2 · CHESAPEAKE',0.4]],lupa:[0.45,0.25,'rumo à baía']});
+B.card('lv_mapa_virginia_1590.jpg','Outra possibilidade',{labels:[['TEORIA 2 · CHESAPEAKE',0.4]],lupa:[0.45,0.25,'rumo à baía']});
 B.card('c09_settlement_of_jamestown_1607.jpg','Vinte anos depois',{labels:[['1607 · JAMESTOWN',0.4],['TEORIA 3 · POWHATAN','Powhatan']]});
 B.title('NENHUMA DESSAS TEORIAS','Foi comprovada.','Nenhuma dessas teorias',{big:'foi comprovada',size:120});
 B.card('c07_fort_raleigh_fort_u_s_64_264_manteo_dare.jpg','Arqueólogos já escavaram',{labels:[['FORT RALEIGH · ESCAVAÇÕES',0.4]]});
